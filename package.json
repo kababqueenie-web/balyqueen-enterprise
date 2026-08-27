@@ -1,0 +1,15 @@
+{
+  "name": "balyqueen-enterprise",
+  "version": "1.0.0",
+  "description": "Balyqueen Enterprise online store",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "dotenv": "^17.2.1",
+    "better-sqlite3": "^12.2.0"
+  }
+}
