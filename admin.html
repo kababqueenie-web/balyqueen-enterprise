@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Balyqueen Enterprise - Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #fff5f8;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      color: #ff8fb3;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      font-size: 13px;
+      color: #ddd;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #111;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .pink-btn {
+      background: #ff75a3;
+      color: white;
+      width: 100%;
+    }
+
+    .black-btn {
+      background: #111;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #d62828;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #111;
+      color: white;
+      margin-right: 5px;
+    }
+
+    .logout-btn {
+      background: #ff75a3;
+      color: white;
+      float: right;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .product {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      background: #fffafa;
+    }
+
+    .product h3 {
+      margin-bottom: 7px;
+    }
+
+    .product p {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    .product-buttons {
+      margin-top: 12px;
+    }
+
+    .product-image {
+      width: 100%;
+      max-width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .empty {
+      color: #777;
+      padding: 10px 0;
+    }
+
+    .login-box {
+      max-width: 450px;
+      margin: 60px auto;
+    }
+
+    .topbar {
+      background: #111;
+      color: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .topbar h2 {
+      color: white;
+      display: inline-block;
+      margin: 5px 0;
+    }
+
+    .order {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .status {
+      display: inline-block;
+      background: #fff0f5;
+      color: #d6336c;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media (min-width: 700px) {
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .form-grid input,
+      .form-grid select {
+        margin-bottom: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>👑 Balyqueen Enterprise</h1>
+  <p>Admin Dashboard</p>
+</header>
+
+
+<!-- LOGIN -->
+
+<div id="loginSection" class="container">
+
+  <div class="card login-box">
+
+    <h2>Admin Login 🔐</h2>
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Username"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button
+      class="pink-btn"
+      onclick="login()"
+    >
+      Login
+    </button>
+
+    <p id="loginMessage"></p>
+
+  </div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="container">
+
+  <div class="topbar">
+
+    <h2>Dashboard 👑</h2>
+
+    <button
+      class="logout-btn"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+
+  <!-- PRODUCT FORM -->
+
+  <div class="card">
+
+    <h2 id="formTitle">Add New Product</h2>
+
+    <form id="productForm">
+
+      <input
+        type="hidden"
+        id="productId"
+      >
+
+      <input
+        type="text"
+        id="productName"
+        placeholder="Product name"
+        required
+      >
+
+      <textarea
+        id="productDescription"
+        placeholder="Product description"
+      ></textarea>
+
+      <div class="form-grid">
+
+        <input
+          type="number"
+          id="productPrice"
+          placeholder="Price in ₦"
+          min="0"
+          required
+        >
+
+        <input
+          type="number"
+          id="productStock"
+          placeholder="Stock quantity"
+          min="0"
+          required
+        >
+
+      </div>
+
+      <select id="productCategory" required>
+
+        <option value="">
+          Select category
+        </option>
+
+        <option value="Clothing">
+          Clothing
+        </option>
+
+        <option value="Shoes">
+          Shoes
+        </option>
+
+        <option value="Bags">
+          Bags
+        </option>
+
+        <option value="Abaya">
+          Abaya
+        </option>
+
+        <option value="Beauty">
+          Beauty & Cosmetics
+        </option>
+
+        <option value="Jewelry">
+          Jewelry
+        </option>
+
+        <option value="Watches">
+          Watches
+        </option>
+
+        <option value="Gadgets">
+          Gadgets
+        </option>
+
+        <option value="Home">
+          Home & Kitchen
+        </option>
+
+        <option value="Room Decor">
+          Room Decor
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+
+      </select>
+
+      <input
+        type="file"
+        id="productImage"
+        accept="image/*"
+      >
+
+      <button
+        type="submit"
+        class="pink-btn"
+        id="saveButton"
+      >
+        Add Product
+      </button>
+
+      <button
+        type="button"
+        class="black-btn"
+        id="cancelButton"
+        onclick="cancelEdit()"
+        style="display:none; margin-top:10px;"
+      >
+        Cancel Edit
+      </button>
+
+    </form>
+
+    <p id="productMessage"></p>
+
+  </div>
+
+
+  <!-- PRODUCTS -->
+
+  <div class="card">
+
+    <h2>My Products 🛍️</h2>
+
+    <div id="productsList">
+      Loading products...
+    </div>
+
+  </div>
+
+
+  <!-- ORDERS -->
+
+  <div class="card">
+
+    <h2>Customer Orders 📦</h2>
+
+    <div id="ordersList">
+      Loading orders...
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  let token = localStorage.getItem("balyqueenAdminToken");
+
+
+  /* CHECK LOGIN */
+
+  if (token) {
+    showDashboard();
+  }
+
+
+  /* LOGIN */
+
+  async function login() {
+
+    const username =
+      document.getElementById("username").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const message =
+      document.getElementById("loginMessage");
+
+    if (!username || !password) {
+
+      message.textContent =
+        "Please enter your username and password.";
+
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch("/api/admin/login", {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            username,
+            password
+          })
+
+        });
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        message.textContent =
+          data.message || "Login failed.";
+
+        return;
+      }
+
+      token = data.token;
+
+      localStorage.setItem(
+        "balyqueenAdminToken",
+        token
+      );
+
+      showDashboard();
+
+    } catch (error) {
+
+      message.textContent =
+        "Could not connect to server.";
+
+    }
+
+  }
+
+
+  /* SHOW DASHBOARD */
+
+  function showDashboard() {
+
+    document.getElementById(
+      "loginSection"
+    ).style.display = "none";
+
+    document.getElementById(
+      "dashboard"
+    ).style.display = "block";
+
+    loadProducts();
+
+    loadOrders();
+
+  }
+
+
+  /* LOGOUT */
+
+  function logout() {
+
+    localStorage.removeItem(
+      "balyqueenAdminToken"
+    );
+
+    token = null;
+
+    location.reload();
+
+  }
+
+
+  /* LOAD PRODUCTS */
+
+  async function loadProducts() {
+
+    const list =
+      document.getElementById("productsList");
+
+    try {
+
+      const response =
+        await fetch("/api/products");
+
+      const products =
+        await response.json();
+
+      list.innerHTML = "";
+
+      if (!products.length) {
+
+        list.innerHTML =
+          '<p class="empty">No products added yet.</p>';
+
+        return;
+      }
+
+      products.forEach(product => {
+
+        const box =
+          document.createElement("div");
+
+        box.className = "product";
+
+
+        if (product.image) {
+
+          const image =
+            document.createElement("img");
+
+          image.className =
+            "product-image";
+
+          image.src =
+            product.image;
+
+          image.alt =
+            product.name;
+
+          box.appendChild(image);
+
+        }
+
+
+        const title =
+          document.createElement("h3");
+
+        title.textContent =
+          product.name;
+
+        box.appendChild(title);
+
+
+        const price =
+          document.createElement("p");
+
+        price.textContent =
+          "Price: ₦" +
+          Number(product.price).toLocaleString();
+
+        box.appendChild(price);
+
+
+        const category =
+          document.createElement("p");
+
+        category.textContent =
+          "Category: " +
+          product.category;
+
+        box.appendChild(category);
+
+
+        const stock =
+          document.createElement("p");
+
+        stock.textContent =
+          "Stock: " +
+          product.stock;
+
+        box.appendChild(stock);
+
+
+        if (product.description) {
+
+          const description =
+            document.createElement("p");
+
+          description.textContent =
+            product.description;
+
+          box.appendChild(description);
+
+        }
+
+
+        const buttons =
+          document.createElement("div");
+
+        buttons.className =
+          "product-buttons";
+
+
+        const edit =
+          document.createElement("button");
+
+        edit.className =
+          "edit-btn";
+
+        edit.textContent =
+          "Edit";
+
+        edit.onclick =
+          function() {
+            editProduct(product);
+          };
+
+
+        const remove =
+          document.createElement("button");
+
+        remove.className =
+          "delete-btn";
+
+        remove.textContent =
+          "Delete";
+
+        remove.onclick =
+          function() {
+            deleteProduct(product.id);
+          };
+
+
+        buttons.appendChild(edit);
+
+        buttons.appendChild(remove);
+
+        box.appendChild(buttons);
+
+        list.appendChild(box);
+
+      });
+
+    } catch (error) {
+
+      list.innerHTML =
+        '<p class="empty">Could not load products.</p>';
+
+    }
+
+  }
+
+
+  /* EDIT PRODUCT */
+
+  function editProduct(product) {
+
+    document.getElementById(
+      "productId"
+    ).value = product.id;
+
+    document.getElementById(
+      "productName"
+    ).value = product.name;
+
+    document.getElementById(
+      "productDescription"
+    ).value = product.description || "";
+
+    document.getElementById(
+      "productPrice"
+    ).value = product.price;
+
+    document.getElementById(
+      "productStock"
+    ).value = product.stock;
+
+    document.getElementById(
+      "productCategory"
+    ).value = product.category;
+
+    document.getElementById(
+      "formTitle"
+    ).textContent = "Edit Product";
+
+    document.getElementById(
+      "saveButton"
+    ).textContent = "Save Changes";
+
+    document.getElementById(
+      "cancelButton"
+    ).style.display = "block";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* CANCEL EDIT */
+
+  function cancelEdit() {
+
+    document.getElementById(
+      "productForm"
+    ).reset();
+
+    document.getElementById(
+      "productId"
+    ).value = "";
+
+    document.getElementById(
+      "formTitle"
+    ).textContent = "Add New Product";
+
+    document.getElementById(
+      "saveButton"
+    ).textContent = "Add Product";
+
+    document.getElementById(
+      "cancelButton"
+    ).style.display = "none";
+
+  }
+
+
+  /* SAVE PRODUCT */
+
+  document.getElementById(
+    "productForm"
+  ).addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const id =
+        document.getElementById(
+          "productId"
+        ).value;
+
+      const name =
+        document.getElementById(
+          "productName"
+        ).value;
+
+      const description =
+        document.getElementById(
+          "productDescription"
+        ).value;
+
+      const price =
+        document.getElementById(
+          "productPrice"
+        ).value;
+
+      const category =
+        document.getElementById(
+          "productCategory"
+        ).value;
+
+      const stock =
+        document.getElementById(
+          "productStock"
+        ).value;
+
+      const imageInput =
+        document.getElementById(
+          "productImage"
+        );
+
+      const message =
+        document.getElementById(
+          "productMessage"
+        );
+
+
+      try {
+
+        /* EDIT */
+
+        if (id) {
+
+          const response =
+            await fetch(
+              "/api/admin/products/" + id,
+              {
+
+                method: "PUT",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  "Authorization":
+                    "Bearer " + token
+                },
+
+                body: JSON.stringify({
+
+                  name,
+                  description,
+                  price,
+                  category,
+                  stock
+
+                })
+
+              }
+            );
+
+          const data =
+            await response.json();
+
+          if (!response.ok) {
+
+            message.textContent =
+              data.message ||
+              "Could not update product.";
+
+            return;
+          }
+
+          message.textContent =
+            "Product updated successfully 👑";
+
+          cancelEdit();
+
+          loadProducts();
+
+          return;
+
+        }
+
+
+        /* ADD */
+
+        const formData =
+          new FormData();
+
+        formData.append(
+          "name",
+          name
+        );
+
+        formData.append(
+          "description",
+          description
+        );
+
+        formData.append(
+          "price",
+          price
+        );
+
+        formData.append(
+          "category",
+          category
+        );
+
+        formData.append(
+          "stock",
+          stock
+        );
+
+        if (
+          imageInput.files.length > 0
+        ) {
+
+          formData.append(
+            "image",
+            imageInput.files[0]
+          );
+
+        }
+
+
+        const response =
+          await fetch(
+            "/api/admin/products",
+            {
+
+              method: "POST",
+
+              headers: {
+                "Authorization":
+                  "Bearer " + token
+              },
+
+              body: formData
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          message.textContent =
+            data.message ||
+            "Could not add product.";
+
+          return;
+        }
+
+
+        message.textContent =
+          "Product added successfully 👑";
+
+        document.getElementById(
+          "productForm"
+        ).reset();
+
+        loadProducts();
+
+
+      } catch (error) {
+
+        message.textContent =
+          "Something went wrong.";
+
+      }
+
+    }
+  );
+
+
+  /* DELETE PRODUCT */
+
+  async function deleteProduct(id) {
+
+    const confirmDelete =
+      confirm(
+        "Are you sure you want to delete this product?"
+      );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/products/" + id,
+          {
+
+            method: "DELETE",
+
+            headers: {
+              "Authorization":
+                "Bearer " + token
+            }
+
+          }
+        );
+
+
+      if (
+        response.status === 401
+      ) {
+
+        logout();
+
+        return;
+      }
+
+
+      const data =
+        await response.json();
+
+
+      if (data.success) {
+
+        loadProducts();
+
+      } else {
+
+        alert(
+          "Could not delete product."
+        );
+
+      }
+
+    } catch (error) {
+
+      alert(
+        "Could not connect to server."
+      );
+
+    }
+
+  }
+
+
+  /* LOAD ORDERS */
+
+  async function loadOrders() {
+
+    const list =
+      document.getElementById(
+        "ordersList"
+      );
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/orders",
+          {
+
+            headers: {
+              "Authorization":
+                "Bearer " + token
+            }
+
+          }
+        );
+
+
+      if (
+        response.status === 401
+      ) {
+
+        logout();
+
+        return;
+      }
+
+
+      const data =
+        await response.json();
+
+
+      list.innerHTML = "";
+
+
+      if (
+        !data.orders ||
+        !data.orders.length
+      ) {
+
+        list.innerHTML =
+          '<p class="empty">No orders yet.</p>';
+
+        return;
+      }
+
+
+      data.orders.forEach(order => {
+
+        const box =
+          document.createElement("div");
+
+        box.className =
+          "order";
+
+
+        const title =
+          document.createElement("h3");
+
+        title.textContent =
+          "Order #" + order.id;
+
+        box.appendChild(title);
+
+
+        const customer =
+          document.createElement("p");
+
+        customer.textContent =
+          "Customer: " +
+          order.customer_name;
+
+        box.appendChild(customer);
+
+
+        const phone =
+          document.createElement("p");
+
+        phone.textContent =
+          "Phone: " +
+          order.customer_phone;
+
+        box.appendChild(phone);
+
+
+        const email =
+          document.createElement("p");
+
+        email.textContent =
+          "Email: " +
+          order.customer_email;
+
+        box.appendChild(email);
+
+
+        const total =
+          document.createElement("p");
+
+        total.textContent =
+          "Total: ₦" +
+          Number(
+            order.total_amount
+          ).toLocaleString();
+
+        box.appendChild(total);
+
+
+        const payment =
+          document.createElement("p");
+
+        payment.textContent =
+          "Payment: " +
+          order.payment_status;
+
+        box.appendChild(payment);
+
+
+        const status =
+          document.createElement("span");
+
+        status.className =
+          "status";
+
+        status.textContent =
+          order.order_status;
+
+        box.appendChild(status);
+
+
+        list.appendChild(box);
+
+      });
+
+
+    } catch (error) {
+
+      list.innerHTML =
+        '<p class="empty">Could not load orders.</p>';
+
+    }
+
+  }
+
+</script>
+
+</body>
+</html>
