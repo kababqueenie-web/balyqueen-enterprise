@@ -338,13 +338,12 @@ app.post(
         success: false,
         message:
           "Could not add product."
-      });
-
-    }
-
-  }
-);
-);/* EDIT PRODUCT */
+       });
+      
+       }
+     }
+   );
+/* EDIT PRODUCT */
 
 app.put(
   "/api/admin/products/:id",
