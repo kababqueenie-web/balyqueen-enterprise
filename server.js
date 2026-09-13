@@ -344,8 +344,71 @@ app.post(
 
   }
 );
+);/* EDIT PRODUCT */
 
+app.put(
+  "/api/admin/products/:id",
+  authenticateAdmin,
+  async (req, res) => {
 
+    try {
+
+      const {
+        name,
+        description,
+        price,
+        category,
+        stock
+      } = req.body;
+
+      const result =
+        await pool.query(
+          `UPDATE products
+           SET
+             name = $1,
+             description = $2,
+             price = $3,
+             category = $4,
+             stock = $5
+           WHERE id = $6
+           RETURNING *`,
+          [
+            name,
+            description || "",
+            Number(price),
+            category,
+            Number(stock || 0),
+            Number(req.params.id)
+          ]
+        );
+
+      if (result.rows.length === 0) {
+
+        return res.status(404).json({
+          success: false,
+          message: "Product not found."
+        });
+
+      }
+
+      res.json({
+        success: true,
+        product: result.rows[0]
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false,
+        message: "Could not update product."
+      });
+
+    }
+
+  }
+);
 /* DELETE PRODUCT */
 
 app.delete(
