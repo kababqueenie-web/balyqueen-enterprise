@@ -6,8 +6,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const multer = require("multer");
+const { v2: cloudinary } = require("cloudinary");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const app = express();
+const app = express();1
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,11 +28,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname));
-
 const upload = multer({
-  dest: "uploads/"
+  storage: multer.memoryStorage()
 });
 
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "balyqueen-products"
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+
+    stream.end(buffer);
+  });
+}
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"))
@@ -300,11 +323,15 @@ app.post(
         stock
       } = req.body;
 
-      const image =
-        req.file
-          ? "/uploads/" +
-            req.file.filename
-          : "";
+      let image = "";
+
+if (req.file) {
+  const uploadedImage = await uploadToCloudinary(
+    req.file.buffer
+  );
+
+  image = uploadedImage.secure_url;
+}
 
       const result =
         await pool.query(
