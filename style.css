@@ -196,6 +196,30 @@ main h2 {
   font-weight: bold;
   margin-bottom: 6px;
 }
+.old-price {
+  color: #777;
+  font-size: 14px;
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+
+.sale-price {
+  color: #f59ab0;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.sale-badge {
+  display: inline-block;
+  padding: 3px 7px;
+  background: #f59ab0;
+  color: #111;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
 
 .stock {
   color: #aaa;
@@ -760,4 +784,62 @@ footer p {
     grid-template-columns: 1fr;
   }
 
+}
+
+/* PRODUCT DETAILS PAGE */
+
+.product-detail {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.detail-images {
+    width: 100%;
+}
+
+#detail-main-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    display: block;
+    border-radius: 12px;
+    background: #222;
+}
+
+.detail-thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+.detail-thumbnail {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.65;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+}
+
+.detail-thumbnail.active {
+    opacity: 1;
+    border-color: #f59ab0;
+}
+
+.detail-info {
+    margin-top: 25px;
+}
+
+.detail-info h2 {
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.detail-description {
+    line-height: 1.6;
+    margin: 15px 0;
 }
