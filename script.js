@@ -57,17 +57,78 @@ function displayProducts(items) {
             "product-card";
 
 
-        const image =
-            product.image ||
-            "https://via.placeholder.com/500x500?text=Balyqueen";
+        let images = [];
+
+        try {
+
+            images =
+                JSON.parse(product.image);
+
+            if (!Array.isArray(images)) {
+                images = [product.image];
+            }
+
+        } catch (error) {
+
+            images =
+                product.image
+                ? [product.image]
+                : [];
+
+        }
+
+
+        if (images.length === 0) {
+
+            images = [
+                "https://via.placeholder.com/500x500?text=Balyqueen"
+            ];
+
+        }
 
 
         card.innerHTML = `
 
-            <img
-                src="${image}"
-                alt="${escapeHTML(product.name)}"
-            >
+            <div class="product-images">
+
+                <img
+                    src="${images[0]}"
+                    alt="${escapeHTML(product.name)}"
+                    class="main-product-image"
+                    id="main-image-${product.id}"
+                >
+
+                ${
+                    images.length > 1
+                    ? `
+                        <div class="image-thumbnails">
+
+                            ${images.map((image, index) => `
+                                <img
+                                    src="${image}"
+                                    alt="${escapeHTML(product.name)}"
+                                    class="image-thumbnail ${
+                                        index === 0
+                                        ? "active"
+                                        : ""
+                                    }"
+                                    onclick="
+                                        changeProductImage(
+                                            ${product.id},
+                                            '${image}',
+                                            this
+                                        )
+                                    "
+                                >
+                            `).join("")}
+
+                        </div>
+                    `
+                    : ""
+                }
+
+            </div>
+
 
             <div class="product-info">
 
@@ -107,6 +168,46 @@ function displayProducts(items) {
 
     });
 
+}
+
+
+/* =========================
+   CHANGE PRODUCT IMAGE
+========================= */
+
+function changeProductImage(
+    productId,
+    image,
+    thumbnail
+) {
+
+    const mainImage =
+        document.getElementById(
+            `main-image-${productId}`
+        );
+
+    if (!mainImage) {
+        return;
+    }
+
+    mainImage.src = image;
+
+
+    const thumbnails =
+        thumbnail
+            .parentElement
+            .querySelectorAll(
+                ".image-thumbnail"
+            );
+
+    thumbnails.forEach(item => {
+
+        item.classList.remove("active");
+
+    });
+
+
+    thumbnail.classList.add("active");
 }
 
 
