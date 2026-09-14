@@ -376,10 +376,34 @@
 
       </select>
 
-      <input
-        type="file"
-        id="productImage"
-        accept="image/*"
+      <div>
+
+  <input
+    type="file"
+    id="productImage"
+    accept="image/*"
+  >
+
+  <button
+    type="button"
+    class="black-btn"
+    onclick="addProductImage()"
+    style="margin-top:8px;"
+  >
+    Add Another Picture
+  </button>
+
+  <div
+    id="imagePreview"
+    style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    "
+  ></div>
+
+      </div>
       >
 
       <button
@@ -585,21 +609,33 @@
 
         if (product.image) {
 
-          const image =
-            document.createElement("img");
+  let images = [];
 
-          image.className =
-            "product-image";
+  try {
+    images = JSON.parse(product.image);
+  } catch (error) {
+    images = [product.image];
+  }
 
-          image.src =
-            product.image;
+  images.forEach(imageUrl => {
 
-          image.alt =
-            product.name;
+    const image =
+      document.createElement("img");
 
-          box.appendChild(image);
+    image.className =
+      "product-image";
 
-        }
+    image.src =
+      imageUrl;
+
+    image.alt =
+      product.name;
+
+    box.appendChild(image);
+
+  });
+
+      }
 
 
         const title =
@@ -762,6 +798,62 @@
 
   }
 
+let selectedProductImages = [];
+
+
+/* ADD ANOTHER PRODUCT IMAGE */
+
+function addProductImage() {
+
+  const input =
+    document.getElementById("productImage");
+
+  const preview =
+    document.getElementById("imagePreview");
+
+  if (!input.files.length) {
+    return;
+  }
+
+  const file =
+    input.files[0];
+
+  selectedProductImages.push(file);
+
+
+  const reader =
+    new FileReader();
+
+  reader.onload = function(event) {
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      event.target.result;
+
+    image.style.width =
+      "70px";
+
+    image.style.height =
+      "70px";
+
+    image.style.objectFit =
+      "cover";
+
+    image.style.borderRadius =
+      "8px";
+
+    preview.appendChild(image);
+
+  };
+
+  reader.readAsDataURL(file);
+
+
+  input.value = "";
+
+      }
 
   /* CANCEL EDIT */
 
@@ -901,49 +993,51 @@
 
         /* ADD */
 
-        const formData =
-          new FormData();
+const formData =
+  new FormData();
 
-        formData.append(
-          "name",
-          name
-        );
+formData.append(
+  "name",
+  name
+);
 
-        formData.append(
-          "description",
-          description
-        );
+formData.append(
+  "description",
+  description
+);
 
-        formData.append(
-          "price",
-          price
-        );
+formData.append(
+  "price",
+  price
+);
 
-        formData.append(
-          "category",
-          category
-        );
+formData.append(
+  "category",
+  category
+);
 
-        formData.append(
-          "stock",
-          stock
-        );
-        formData.append(
+formData.append(
+  "stock",
+  stock
+);
+
+formData.append(
   "product_type",
   document.getElementById("productType").value
 );
 
-        if (
-          imageInput.files.length > 0
-        ) {
+if (selectedProductImages.length > 0) {
 
-          formData.append(
-            "image",
-            imageInput.files[0]
-          );
+  selectedProductImages.forEach(file => {
 
-        }
+    formData.append(
+      "images",
+      file
+    );
 
+  });
+
+    }
 
         const response =
           await fetch(
@@ -978,13 +1072,19 @@
 
 
         message.textContent =
-          "Product added successfully 👑";
+  "Product added successfully 👑";
 
-        document.getElementById(
-          "productForm"
-        ).reset();
+document.getElementById(
+  "productForm"
+).reset();
 
-        loadProducts();
+selectedProductImages = [];
+
+document.getElementById(
+  "imagePreview"
+).innerHTML = "";
+
+loadProducts();
 
 
       } catch (error) {
