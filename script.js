@@ -21,17 +21,13 @@ async function loadProducts() {
     } catch (error) {
 
         console.error(error);
-
-        document.getElementById("products").innerHTML =
-            "<p>Unable to load products.</p>";
-    }
+document.getElementById("products").innerHTML =
+    "<p>Unable to load products.</p>";
 }
 
-
-/* =========================
+/* ========================
    DISPLAY PRODUCTS
 ========================= */
-
 function displayProducts(items) {
 
     const container =
@@ -56,6 +52,20 @@ function displayProducts(items) {
         card.className =
             "product-card";
 
+      card.style.cursor = "pointer";
+
+card.addEventListener("click", function(event) {
+
+    if (
+        event.target.closest("button") ||
+        event.target.closest(".image-thumbnail")
+    ) {
+        return;
+    }
+
+    window.location.href =
+        "product.html?id=" + product.id;
+});
 
         let images = [];
 
@@ -136,9 +146,31 @@ function displayProducts(items) {
                     ${escapeHTML(product.name)}
                 </h3>
 
-                <p class="price">
-                    ₦${Number(product.price).toLocaleString()}
-                </p>
+                ${
+    product.sale_price
+    ? `
+        <p class="old-price">
+            ₦${Number(product.price).toLocaleString()}
+        </p>
+
+        <p class="sale-price">
+            ₦${Number(product.sale_price).toLocaleString()}
+        </p>
+
+        <span class="sale-badge">
+            SALE
+        </span>
+    `
+    : `
+        <p class="price">
+            ₦${Number(product.price).toLocaleString()}
+        </p>
+    `
+                }
+
+<p class="description">
+    ${escapeHTML(product.description || "No description available.")}
+</p>
 
                 <p class="stock">
                     ${
