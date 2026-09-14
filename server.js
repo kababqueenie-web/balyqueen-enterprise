@@ -13,7 +13,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const app = express();1
+const app = express();
 
 const PORT = process.env.PORT || 3000;
 
@@ -79,6 +79,12 @@ async function setupDatabase() {
       stock INTEGER DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS product_type
+    TEXT DEFAULT 'ready_stock'
   `);
 
   await pool.query(`
@@ -320,26 +326,27 @@ app.post(
         description,
         price,
         category,
-        stock
+        stock,
+        product_type
       } = req.body;
 
       let image = "";
 
-if (req.file) {
-  const uploadedImage = await uploadToCloudinary(
-    req.file.buffer
-  );
+      if (req.file) {
+        const uploadedImage = await uploadToCloudinary(
+          req.file.buffer
+        );
 
-  image = uploadedImage.secure_url;
-}
+        image = uploadedImage.secure_url;
+      }
 
       const result =
         await pool.query(
           `INSERT INTO products
            (name, description, price,
-            category, image, stock)
+            category, image, stock, product_type)
            VALUES
-           ($1, $2, $3, $4, $5, $6)
+           ($1, $2, $3, $4, $5, $6, $7)
            RETURNING *`,
           [
             name,
@@ -347,7 +354,8 @@ if (req.file) {
             Number(price),
             category,
             image,
-            Number(stock || 0)
+            Number(stock || 0),
+            product_type || "ready_stock"
           ]
         );
 
@@ -365,11 +373,11 @@ if (req.file) {
         success: false,
         message:
           "Could not add product."
-       });
-      
-       }
-     }
-   );
+      });
+
+    }
+  }
+);
 /* EDIT PRODUCT */
 
 app.put(
@@ -384,7 +392,8 @@ app.put(
         description,
         price,
         category,
-        stock
+        stock,
+        product_type
       } = req.body;
 
       const result =
@@ -395,8 +404,9 @@ app.put(
              description = $2,
              price = $3,
              category = $4,
-             stock = $5
-           WHERE id = $6
+             stock = $5,
+             product_type = $6
+           WHERE id = $7
            RETURNING *`,
           [
             name,
@@ -404,6 +414,7 @@ app.put(
             Number(price),
             category,
             Number(stock || 0),
+            product_type || "ready_stock",
             Number(req.params.id)
           ]
         );

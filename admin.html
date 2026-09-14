@@ -360,6 +360,21 @@
         </option>
 
       </select>
+      <select id="productType" required>
+
+  <option value="">
+    Select product type
+  </option>
+
+  <option value="ready_stock">
+    Ready Stock
+  </option>
+
+  <option value="china_preorder">
+    China Pre-Order
+  </option>
+
+      </select>
 
       <input
         type="file"
@@ -723,6 +738,10 @@
     document.getElementById(
       "productCategory"
     ).value = product.category;
+    document.getElementById(
+  "productType"
+).value =
+  product.product_type || "ready_stock";
 
     document.getElementById(
       "formTitle"
@@ -909,6 +928,10 @@
           "stock",
           stock
         );
+        formData.append(
+  "product_type",
+  document.getElementById("productType").value
+);
 
         if (
           imageInput.files.length > 0
