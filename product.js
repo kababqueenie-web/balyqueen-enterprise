@@ -1,4 +1,6 @@
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(
+    window.location.search
+);
 
 const productId = params.get("id");
 
@@ -8,22 +10,16 @@ const container =
 
 async function loadProduct() {
 
-    if (!productId) {
-        container.innerHTML =
-            "<p>Product not found.</p>";
-        return;
-    }
-
     try {
 
-      const response =
-    await fetch("/api/products");
+        if (!productId) {
+            container.innerHTML =
+                "<p>Product not found.</p>";
+            return;
+        }
 
-if (!response.ok) {
-    throw new Error(
-        "Failed to load products"
-    );
-}
+        const response =
+            await fetch("/api/products");
 
         const products =
             await response.json();
@@ -41,7 +37,6 @@ if (!response.ok) {
             return;
         }
 
-
         let images = [];
 
         try {
@@ -49,26 +44,18 @@ if (!response.ok) {
             images =
                 JSON.parse(product.image);
 
-            if (!Array.isArray(images)) {
+        } catch (error) {
+
+            if (product.image) {
                 images = [product.image];
             }
 
-        } catch (error) {
-
-            images =
-                product.image
-                ? [product.image]
-                : [];
-
         }
 
-
-        if (images.length === 0) {
-
+        if (!images.length) {
             images = [
                 "https://via.placeholder.com/500x500?text=Balyqueen"
             ];
-
         }
 
 
@@ -84,34 +71,26 @@ if (!response.ok) {
                         alt="${escapeHTML(product.name)}"
                     >
 
-                    ${
-                        images.length > 1
-                        ? `
-                            <div class="detail-thumbnails">
+                    <div class="detail-thumbnails">
 
-                                ${images.map((image, index) => `
+                        ${images.map((image, index) => `
 
-                                    <img
-                                        src="${image}"
-                                        class="detail-thumbnail ${
-                                            index === 0
-                                            ? "active"
-                                            : ""
-                                        }"
-                                        onclick="
-                                            changeDetailImage(
-                                                '${image}',
-                                                this
-                                            )
-                                        "
-                                    >
+                            <img
+                                src="${image}"
+                                class="detail-thumbnail ${
+                                    index === 0
+                                    ? "active"
+                                    : ""
+                                }"
+                                onclick="changeDetailImage(
+                                    '${image}',
+                                    this
+                                )"
+                            >
 
-                                `).join("")}
+                        `).join("")}
 
-                            </div>
-                        `
-                        : ""
-                    }
+                    </div>
 
                 </div>
 
@@ -122,11 +101,9 @@ if (!response.ok) {
                         ${escapeHTML(product.name)}
                     </h2>
 
-
                     ${
                         product.sale_price
                         ? `
-
                             <p class="old-price">
                                 ₦${Number(product.price).toLocaleString()}
                             </p>
@@ -138,54 +115,28 @@ if (!response.ok) {
                             <span class="sale-badge">
                                 SALE
                             </span>
-
                         `
                         : `
-
                             <p class="price">
                                 ₦${Number(product.price).toLocaleString()}
                             </p>
-
                         `
                     }
 
-
                     <p class="detail-description">
-
-                        ${
-                            escapeHTML(
-                                product.description ||
-                                "No description available."
-                            )
-                        }
-
+                        ${escapeHTML(
+                            product.description ||
+                            "No description available."
+                        )}
                     </p>
 
-
                     <p class="stock">
-
                         ${
                             product.stock > 0
                             ? product.stock + " available"
                             : "Out of stock"
                         }
-
                     </p>
-
-
-                    <button
-                        class="add-button"
-                        onclick="addToCart(${product.id})"
-                        ${product.stock <= 0 ? "disabled" : ""}
-                    >
-
-                        ${
-                            product.stock > 0
-                            ? "Add to Cart"
-                            : "Out of Stock"
-                        }
-
-                    </button>
 
                 </div>
 
@@ -195,7 +146,10 @@ if (!response.ok) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Product page error:",
+            error
+        );
 
         container.innerHTML =
             "<p>Unable to load product.</p>";
@@ -210,13 +164,9 @@ function changeDetailImage(
     thumbnail
 ) {
 
-    const mainImage =
-        document.getElementById(
-            "detail-main-image"
-        );
-
-    mainImage.src = image;
-
+    document.getElementById(
+        "detail-main-image"
+    ).src = image;
 
     document
         .querySelectorAll(
@@ -229,7 +179,6 @@ function changeDetailImage(
             );
 
         });
-
 
     thumbnail.classList.add(
         "active"
